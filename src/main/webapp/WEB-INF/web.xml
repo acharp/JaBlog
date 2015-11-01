@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <servlet>
+        <servlet-name>User</servlet-name>
+        <servlet-class>fr.ecp.sio.appenginedemo.api.UserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>User</servlet-name>
+        <url-pattern>users/*</url-pattern>
+        <!-- La partie correspondant sur laquelle url pattern est recherché est toute la partie dee l'URL avant le query string "?" -->
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Users</servlet-name>
+        <servlet-class>fr.ecp.sio.appenginedemo.api.UsersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Users</servlet-name>
+        <url-pattern>users</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Message</servlet-name>
+        <servlet-class>fr.ecp.sio.appenginedemo.api.MessageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Message</servlet-name>
+        <url-pattern>messages/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Messages</servlet-name>
+        <servlet-class>fr.ecp.sio.appenginedemo.api.MessagesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Messages</servlet-name>
+        <url-pattern>messages</url-pattern>
+    </servlet-mapping>
+
+</web-app>
