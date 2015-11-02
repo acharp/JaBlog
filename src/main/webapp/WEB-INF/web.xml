@@ -38,4 +38,13 @@
         <url-pattern>messages</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>Token</servlet-name>
+        <servlet-class>fr.ecp.sio.appenginedemo.api.TokenServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Token</servlet-name>
+        <url-pattern>auth/token</url-pattern>
+    </servlet-mapping>
+
 </web-app>

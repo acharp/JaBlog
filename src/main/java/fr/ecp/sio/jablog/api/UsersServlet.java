@@ -17,7 +17,7 @@ public class UsersServlet extends JsonServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected Object doPost(HttpServletRequest req) throws ServletException, IOException {
+        return null;
     }
-
 }

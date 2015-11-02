@@ -1,11 +1,9 @@
 package fr.ecp.sio.jablog.api;
 
-import fr.ecp.sio.jablog.MessageRepository;
+import fr.ecp.sio.jablog.MessagesRepository;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -23,15 +21,17 @@ public class MessageServlet extends JsonServlet {
         // Les 2 dernières vont être communes à tous les get de nos servlets donc ça vaut le coup de les délocaliser
 
         long id=0;
-        return MessageRepository.getMessage(id);
+        return MessagesRepository.getMessage(id);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected Object doPost(HttpServletRequest req) throws ServletException, IOException {
+        return null;
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected Object doDelete(HttpServletRequest req) throws ServletException, IOException {
+        return null;
     }
 
 }
