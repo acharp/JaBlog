@@ -1,4 +1,4 @@
-package fr.ecp.sio.jablog;
+package fr.ecp.sio.jablog.utils;
 
 /**
  * Created by charpi on 02/11/15.

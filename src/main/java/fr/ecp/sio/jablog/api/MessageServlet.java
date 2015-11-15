@@ -1,6 +1,6 @@
 package fr.ecp.sio.jablog.api;
 
-import fr.ecp.sio.jablog.MessagesRepository;
+import fr.ecp.sio.jablog.data.MessagesRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

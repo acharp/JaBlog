@@ -1,4 +1,4 @@
-package fr.ecp.sio.jablog;
+package fr.ecp.sio.jablog.utils;
 
 import fr.ecp.sio.jablog.model.User;
 import io.jsonwebtoken.Jwts;
@@ -23,7 +23,6 @@ public class TokenUtils {
     }
 
     public static long parseToken(String token) throws SignatureException{
-
             return Long.parseLong(Jwts.parser()
                     .setSigningKey(KEY)
                     .parseClaimsJws(token)

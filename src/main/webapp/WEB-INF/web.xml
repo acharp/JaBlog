@@ -3,7 +3,7 @@
 
     <servlet>
         <servlet-name>User</servlet-name>
-        <servlet-class>fr.ecp.sio.appenginedemo.api.UserServlet</servlet-class>
+        <servlet-class>fr.ecp.sio.jablog.api.UserServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>User</servlet-name>
@@ -13,7 +13,7 @@
 
     <servlet>
         <servlet-name>Users</servlet-name>
-        <servlet-class>fr.ecp.sio.appenginedemo.api.UsersServlet</servlet-class>
+        <servlet-class>fr.ecp.sio.jablog.api.UsersServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Users</servlet-name>
@@ -22,7 +22,7 @@
 
     <servlet>
         <servlet-name>Message</servlet-name>
-        <servlet-class>fr.ecp.sio.appenginedemo.api.MessageServlet</servlet-class>
+        <servlet-class>fr.ecp.sio.jablog.api.MessageServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Message</servlet-name>
@@ -31,7 +31,7 @@
 
     <servlet>
         <servlet-name>Messages</servlet-name>
-        <servlet-class>fr.ecp.sio.appenginedemo.api.MessagesServlet</servlet-class>
+        <servlet-class>fr.ecp.sio.jablog.api.MessagesServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Messages</servlet-name>
@@ -40,7 +40,7 @@
 
     <servlet>
         <servlet-name>Token</servlet-name>
-        <servlet-class>fr.ecp.sio.appenginedemo.api.TokenServlet</servlet-class>
+        <servlet-class>fr.ecp.sio.jablog.api.TokenServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Token</servlet-name>

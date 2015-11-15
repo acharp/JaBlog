@@ -1,4 +1,4 @@
-package fr.ecp.sio.jablog;
+package fr.ecp.sio.jablog.data;
 
 import fr.ecp.sio.jablog.model.User;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -6,6 +6,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 
 /**
  * Created by charpi on 02/11/15.
@@ -20,10 +23,19 @@ public class UsersRepository {
         john.login = "john";
         john.password = DigestUtils.sha256Hex("toto" + john.id);
         mUsers.add(john);
+
+        User igor = new User();
+        igor.id = 3;
+        igor.login = "igor";
+        igor.password = DigestUtils.sha256Hex("passigor" + igor.id);
+        ofy().save().entity(igor).now();
     }
+
 
     public static User getUser(String login) {
 
+        List<User> users = ofy().load().type(User.class).list();
+        // ==>> Remplacer mUsers par users dans les boucles suivantes et c'est ok
 
         // Simple iteration
         for (User user : mUsers) {
@@ -57,9 +69,8 @@ public class UsersRepository {
     public static User getUser(long id) {
         for (User user : mUsers) {
             if (user.id == id) return user;
-            else {
-                return null;
-            }
         }
+        return null;
     }
+
 }

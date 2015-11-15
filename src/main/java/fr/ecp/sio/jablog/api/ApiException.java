@@ -1,6 +1,5 @@
-package fr.ecp.sio.jablog;
+package fr.ecp.sio.jablog.api;
 
-import fr.ecp.sio.jablog.model.*;
 import fr.ecp.sio.jablog.model.Error;
 
 /**
@@ -10,7 +9,7 @@ public class ApiException extends Exception {
 
     private Error mError;
 
-    public ApiException(String message, int status, String code) {
+    public ApiException(int status, String code, String message) {
         super(message);
         mError = new Error();
         mError.status = status;

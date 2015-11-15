@@ -1,8 +1,7 @@
 package fr.ecp.sio.jablog.api;
 
 import com.google.gson.Gson;
-import fr.ecp.sio.jablog.ApiException;
-import fr.ecp.sio.jablog.UsersRepository;
+import fr.ecp.sio.jablog.data.UsersRepository;
 import fr.ecp.sio.jablog.model.User;
 
 import javax.servlet.ServletException;

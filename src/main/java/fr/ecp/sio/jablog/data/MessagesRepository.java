@@ -1,4 +1,4 @@
-package fr.ecp.sio.jablog;
+package fr.ecp.sio.jablog.data;
 
 import fr.ecp.sio.jablog.model.Message;
 
