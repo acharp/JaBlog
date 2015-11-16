@@ -1,6 +1,5 @@
 package fr.ecp.sio.jablog.utils;
 
-import fr.ecp.sio.jablog.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;

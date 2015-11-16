@@ -13,10 +13,8 @@ import java.io.IOException;
 public class UserServlet extends JsonServlet{
 
     @Override
-    // Ici on ne retourne pas une réponse mais on l'a en paramètre donc on va juste la modifier.
     protected Object doGet(HttpServletRequest req) throws ServletException, IOException {
-        // super.doGet(req, resp);
-        // Par défaut le doGet renvoie un erreur donc il ne faut pas faire cet appel à super.
+
         return null;
 
     }

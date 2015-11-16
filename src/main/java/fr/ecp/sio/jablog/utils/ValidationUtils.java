@@ -1,5 +1,8 @@
 package fr.ecp.sio.jablog.utils;
 
+
+import org.apache.commons.validator.routines.EmailValidator;
+
 /**
  * Created by charpi on 02/11/15.
  */
@@ -16,4 +19,7 @@ public class ValidationUtils {
         return password != null && password.matches(PASSWORD_PATTERN);
     }
 
+    public static boolean validateEmail(String email){
+        return EmailValidator.getInstance(false).isValid(email);
+    }
 }

@@ -8,7 +8,6 @@
     <servlet-mapping>
         <servlet-name>User</servlet-name>
         <url-pattern>users/*</url-pattern>
-        <!-- La partie correspondant sur laquelle url pattern est recherché est toute la partie dee l'URL avant le query string "?" -->
     </servlet-mapping>
 
     <servlet>
@@ -46,5 +45,14 @@
         <servlet-name>Token</servlet-name>
         <url-pattern>auth/token</url-pattern>
     </servlet-mapping>
+
+    <filter>
+        <filter-name>ObjectifyFilter</filter-name>
+        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ObjectifyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 </web-app>
