@@ -78,6 +78,11 @@
             <artifactId>commons-validator</artifactId>
             <version>1.4.1</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -136,9 +141,10 @@
                     <port>8080</port -->
                     <!-- Comment in the below snippet to enable local debugging with a remote debugger
                          like those included with Eclipse or IntelliJ -->
-                    <!-- jvmFlags>
+                    <jvmFlags>
+                        <jvmFlag>-Xdebug</jvmFlag>
                       <jvmFlag>-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n</jvmFlag>
-                    </jvmFlags -->
+                    </jvmFlags>
                 </configuration>
             </plugin>
             <plugin>

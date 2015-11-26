@@ -9,10 +9,10 @@ import fr.ecp.sio.jablog.utils.ValidationUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by charpi on 30/10/15.
@@ -23,10 +23,14 @@ public class UsersServlet extends JsonServlet {
     protected Object doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
         User user = getAuthenticatedUser(req);
 
-        // Récupération et renvoie de la liste des users de la base
-        // Gérer les erreurs possibles
+        List<User> users = UsersRepository.getUsers();
+        List<String> usernames = new ArrayList<>();
+        for (User u : users){
+            usernames.add(u.login);
+        }
 
-        return null;
+        return usernames;
+        //return gson.toJson(usernames, new TypeToken<List<String>>(){}.getType());
     }
 
     @Override

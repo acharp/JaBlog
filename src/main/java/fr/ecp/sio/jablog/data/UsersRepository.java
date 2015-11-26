@@ -1,11 +1,12 @@
 package fr.ecp.sio.jablog.data;
 
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.cmd.Query;
 import fr.ecp.sio.jablog.model.Message;
 import fr.ecp.sio.jablog.model.User;
 import org.apache.commons.codec.digest.DigestUtils;
 
-
+import java.util.List;
 
 
 /**
@@ -42,6 +43,13 @@ public class UsersRepository {
                 .type(User.class)
                 .id(id)
                 .now();
+    }
+
+    public static List<User> getUsers(){
+        return ObjectifyService.ofy()
+                .load()
+                .type(User.class)
+                .list();
     }
 
     public static long insertUser(User user) {

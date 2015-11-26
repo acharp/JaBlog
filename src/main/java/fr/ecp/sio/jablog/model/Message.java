@@ -14,7 +14,7 @@ import com.googlecode.objectify.annotation.Id;
 public class Message {
 
     @Id
-    public long id;
+    public Long id;
 
     public String text;
     public Date date;
