@@ -60,4 +60,11 @@ public class UsersRepository {
                 .getId();
     }
 
+    public static Void deleteUser(long id){
+        return ObjectifyService.ofy()
+                .delete()
+                .entity(getUser(id))
+                .now();
+    }
+
 }

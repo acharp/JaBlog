@@ -23,14 +23,15 @@ public class UsersServlet extends JsonServlet {
     protected Object doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
         User user = getAuthenticatedUser(req);
 
+        /*
         List<User> users = UsersRepository.getUsers();
         List<String> usernames = new ArrayList<>();
         for (User u : users){
             usernames.add(u.login);
         }
-
         return usernames;
-        //return gson.toJson(usernames, new TypeToken<List<String>>(){}.getType());
+        */
+        return UsersRepository.getUsers();
     }
 
     @Override

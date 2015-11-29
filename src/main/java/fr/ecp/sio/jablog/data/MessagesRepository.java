@@ -36,4 +36,11 @@ public class MessagesRepository {
                 .now()
                 .getId();
     }
+
+    public static Void deleteMessage(long id){
+        return ObjectifyService.ofy()
+                .delete()
+                .entity(getMessage(id))
+                .now();
+    }
 }
