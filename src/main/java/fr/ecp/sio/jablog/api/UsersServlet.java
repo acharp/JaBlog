@@ -1,9 +1,9 @@
 package fr.ecp.sio.jablog.api;
 
 
-import com.googlecode.objectify.ObjectifyFactory;
 import fr.ecp.sio.jablog.data.UsersRepository;
 import fr.ecp.sio.jablog.model.User;
+import fr.ecp.sio.jablog.utils.MD5Utils;
 import fr.ecp.sio.jablog.utils.TokenUtils;
 import fr.ecp.sio.jablog.utils.ValidationUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -11,7 +11,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,24 +19,16 @@ import java.util.List;
 public class UsersServlet extends JsonServlet {
 
     @Override
-    protected Object doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
-        User user = getAuthenticatedUser(req);
-
-        /*
-        List<User> users = UsersRepository.getUsers();
-        List<String> usernames = new ArrayList<>();
-        for (User u : users){
-            usernames.add(u.login);
-        }
-        return usernames;
-        */
-        return UsersRepository.getUsers();
+    protected List<User> doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
+        // TODO: define parameters to search/filter users by login, with limit, order...
+        // TODO: define parameters to get the followings and the followers of a user given its id
+        return UsersRepository.getUsers().users;
     }
 
     @Override
     protected String doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
 
-        User user = getJsonParameters(req, User.class);
+        User user = getJsonRequestBody(req, User.class);
         if (user == null){
             throw new ApiException(400, "invalidRequest", "Invalid JSON body");
         }
@@ -63,17 +54,19 @@ public class UsersServlet extends JsonServlet {
             throw new ApiException(400, "duplicateEmail", "Duplicate email");
         }
 
-
         // Explicitly give a fresh id to the user (we need it for next step)
-        user.id = new ObjectifyFactory().allocateId(User.class).getId();
+        user.id = UsersRepository.allocateNewId();
+
+        // TODO: find a solution to receive an store profile pictures
+        user.avatar ="http://www.gravatar.com/avatar" + MD5Utils.md5Hex(user.email) + "?d=wavatar";
 
         // Hash password
         user.password = DigestUtils.sha256Hex(user.password + user.id);
 
         // Save user
-        long id = UsersRepository.insertUser(user);
+        UsersRepository.saveUser(user);
 
         // Return a token
-        return TokenUtils.generateToken(id);
+        return TokenUtils.generateToken(user.id);
     }
 }

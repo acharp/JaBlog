@@ -1,10 +1,8 @@
 package fr.ecp.sio.jablog.data;
 
+import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.cmd.Query;
-import fr.ecp.sio.jablog.model.Message;
 import fr.ecp.sio.jablog.model.User;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.List;
 
@@ -45,15 +43,22 @@ public class UsersRepository {
                 .now();
     }
 
-    public static List<User> getUsers(){
-        return ObjectifyService.ofy()
-                .load()
-                .type(User.class)
-                .list();
+    public static UsersList getUsers() {
+        return new UsersList(
+                ObjectifyService.ofy()
+                        .load()
+                        .type(User.class)
+                        .list(),
+                "dummyCursor"
+        );
     }
 
-    public static long insertUser(User user) {
-        return ObjectifyService.ofy()
+    public static long allocateNewId() {
+        return new ObjectifyFactory().allocateId(User.class).getId();
+    }
+
+    public static void saveUser(User user) {
+        user.id = ObjectifyService.ofy()
                 .save()
                 .entity(user)
                 .now()
@@ -63,8 +68,44 @@ public class UsersRepository {
     public static Void deleteUser(long id){
         return ObjectifyService.ofy()
                 .delete()
-                .entity(getUser(id))
+                .type(User.class)
+                .id(id)
                 .now();
+    }
+
+
+    public static UsersList getUserFollowed(long id, int limit){
+        return getUsers();
+        //:TODO
+    }
+
+    public static UsersList getUserFollowed(String cursor, int limit){
+        return getUsers();
+        //:TODO
+    }
+
+    public static UsersList getUserFollowers(long id){
+        return getUsers();
+        //:TODO
+    }
+
+    public static UsersList getUserFollowers(String cursor, long id){
+        return getUsers();
+        //:TODO
+    }
+
+    public static class UsersList {
+        public List<User> users;
+        public String cursor;
+
+        private UsersList(List<User> users, String cursor) {
+            this.users = users;
+            this.cursor = cursor;
+        }
+    }
+
+    public static void setUserFollowed(long followerId, long followedId, boolean followed) {
+        // To implement later
     }
 
 }

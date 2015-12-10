@@ -1,7 +1,10 @@
 package fr.ecp.sio.jablog.api;
 
 import com.google.gson.JsonObject;
+import com.googlecode.objectify.Ref;
+import fr.ecp.sio.jablog.data.MessagesRepository;
 import fr.ecp.sio.jablog.data.UsersRepository;
+import fr.ecp.sio.jablog.model.Message;
 import fr.ecp.sio.jablog.model.User;
 import fr.ecp.sio.jablog.utils.ValidationUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -9,6 +12,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by charpi on 30/10/15.
@@ -16,27 +22,40 @@ import java.io.IOException;
 public class UserServlet extends JsonServlet{
 
     @Override
-    protected Object doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
-        User auth_user = getAuthenticatedUser(req);
+    protected User doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
 
         // Retrieve id of the needed user in the url
         String string_id = req.getRequestURI().split("/")[2];
-        long id = Integer.parseInt(string_id);
+        long id = Long.parseLong(string_id);
 
-        return UsersRepository.getUser(id);
+        User user = getUser(id);
+
+        // If authenticated user is the same as the user returned we return all infos
+        if (getAuthenticatedUser(req).id == id) {
+            return user;
+        } else {
+            User res_user = new User();
+            res_user.login = user.login;
+            res_user.id = user.id;
+            res_user.avatar = user.avatar;
+            return res_user;
+        }
 
     }
 
 
     @Override
-    protected Object doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
+    protected User doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
         User auth_user = getAuthenticatedUser(req);
 
-        JsonObject updt_info = getJsonParameters(req);
+        JsonObject updt_info = getJsonRequestBody(req);
 
         String string_id = req.getRequestURI().split("/")[2];
-        long id = Integer.parseInt(string_id);
-        User old_user = UsersRepository.getUser(id);
+        long id = Long.parseLong(string_id);
+        if (auth_user.id != id){
+            throw new ApiException(403, "actionForbidden", "This isn't your user account");
+        }
+        User old_user = getUser(id);
 
         User new_user = new User();
         new_user.id = old_user.id;
@@ -71,20 +90,50 @@ public class UserServlet extends JsonServlet{
             new_user.password = DigestUtils.sha256Hex(password + new_user.id);
         } else { new_user.password = old_user.password; }
 
-        UsersRepository.deleteUser(old_user.id);
-        UsersRepository.insertUser(new_user);
+        if (updt_info.has("avatar")) {
+           new_user.avatar = updt_info.get("avatar").getAsString();
+        } else { new_user.avatar = old_user.avatar; }
 
-        return "User with id " + id + " has been modified";
+        // TODO: Handle special parameters like "followed=true" to create or destroy following relationships
+
+        UsersRepository.deleteUser(old_user.id);
+        UsersRepository.saveUser(new_user);
+
+        return new_user;
     }
 
 
     @Override
-    protected Object doDelete(HttpServletRequest req) throws ServletException, IOException, ApiException {
+    protected Void doDelete(HttpServletRequest req) throws ServletException, IOException, ApiException {
         User auth_user = getAuthenticatedUser(req);
 
         String string_id = req.getRequestURI().split("/")[2];
-        long id = Integer.parseInt(string_id);
+        long id = Long.parseLong(string_id);
+        if (auth_user.id != id){
+            throw new ApiException(403, "actionForbidden", "This isn't your user account");
+        }
+
+        // Delete all the messages of the user
+        List<Message> test = MessagesRepository.getMessages();
+        for (Message message : test){
+            if ( message.user.get() == auth_user) {
+                MessagesRepository.deleteMessage(message.id);
+            }
+        }
+
+        // TODO: Delete the relationships of the user
+
         UsersRepository.deleteUser(id);
-        return "User with id " + id + " has been deleted";
+
+        return null;
+    }
+
+
+    // Return a user from an id and throw Exception if doesn't exist
+    private User getUser(long id) throws ApiException {
+        User user = UsersRepository.getUser(id);
+        if (user == null) {
+            throw new ApiException(404, "Resource not found", "User doesn't exist");
+        } else return user;
     }
 }

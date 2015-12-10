@@ -1,16 +1,14 @@
 package fr.ecp.sio.jablog.api;
 
-import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.Ref;
 import fr.ecp.sio.jablog.data.MessagesRepository;
 import fr.ecp.sio.jablog.model.Message;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by charpi on 30/10/15.
@@ -18,14 +16,17 @@ import java.util.Date;
 public class MessagesServlet extends JsonServlet {
 
     @Override
-    protected Object doGet(HttpServletRequest req) throws ServletException, IOException {
+    protected List<Message> doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
+        // TODO: filter the messages that the user can see (security!)
+        // TODO: filter the list based on some parameters (order, limit, scope...)
+        // TODO: e.g. add a parameter to get the messages of a user given its id (i.e. /messages?author=256439)
         return MessagesRepository.getMessages();
     }
 
     @Override
-    protected Object doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
+    protected Message doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
 
-        Message message = getJsonParameters(req, Message.class);
+        Message message = getJsonRequestBody(req, Message.class);
         if (message == null) {
             throw new ApiException(400, "invalidRequest", "Invalid JSON body");
         }
@@ -36,8 +37,9 @@ public class MessagesServlet extends JsonServlet {
 
         message.date = new Date();
         message.user = Ref.create(getAuthenticatedUser(req));
-        message.id = new ObjectifyFactory().allocateId(Message.class).getId(); // A vérifier
-        message.id = MessagesRepository.insertMessage(message);
+        message.id = null;
+
+        MessagesRepository.insertMessage(message);
 
         return message;
     }

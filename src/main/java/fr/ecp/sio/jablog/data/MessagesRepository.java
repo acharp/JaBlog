@@ -2,6 +2,7 @@ package fr.ecp.sio.jablog.data;
 
 import com.googlecode.objectify.ObjectifyService;
 import fr.ecp.sio.jablog.model.Message;
+import fr.ecp.sio.jablog.model.User;
 
 import java.util.List;
 
@@ -29,8 +30,8 @@ public class MessagesRepository {
                 .list();
     }
 
-    public static long insertMessage(Message message) {
-        return ObjectifyService.ofy()
+    public static void insertMessage(Message message) {
+        message.id = ObjectifyService.ofy()
                 .save()
                 .entity(message)
                 .now()
@@ -40,7 +41,9 @@ public class MessagesRepository {
     public static Void deleteMessage(long id){
         return ObjectifyService.ofy()
                 .delete()
-                .entity(getMessage(id))
+                .type(Message.class)
+                .id(id)
                 .now();
     }
+
 }

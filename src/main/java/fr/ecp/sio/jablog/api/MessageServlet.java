@@ -17,30 +17,30 @@ import java.util.Date;
 public class MessageServlet extends JsonServlet {
 
     @Override
-    protected Object doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
-        User auth_user = getAuthenticatedUser(req);
+    protected Message doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
 
         String string_id = req.getRequestURI().split("/")[2];
-        long id = Integer.parseInt(string_id);
+        long id = Long.parseLong(string_id);
 
-        return MessagesRepository.getMessage(id);
+        return getMessage(id);
     }
 
 
     @Override
-    protected Object doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
+    protected Message doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
         User auth_user = getAuthenticatedUser(req);
 
-        JsonObject updt_info = getJsonParameters(req);
+        JsonObject updt_info = getJsonRequestBody(req);
         if (!updt_info.has("text")) {
             throw new ApiException(400, "invalidRequest", "Invalid json body");
         }
 
         String string_id = req.getRequestURI().split("/")[2];
-        long id = Integer.parseInt(string_id);
+        long id = Long.parseLong(string_id);
 
-        Message old_msg = MessagesRepository.getMessage(id);
+        Message old_msg = getMessage(id);
 
+        // Check that the user who wants to modify the message is the owner of the message
         if (auth_user.equals(old_msg.user.getValue())) {
 
             String text = updt_info.get("text").getAsString();
@@ -57,22 +57,39 @@ public class MessageServlet extends JsonServlet {
             MessagesRepository.deleteMessage(old_msg.id);
             MessagesRepository.insertMessage(new_msg);
 
-            return "Message with id " + id + " has been modified";
+            return new_msg;
 
         } else {
-            return "You didn't post this message, you can't modify it";
+            throw new ApiException(403, "actionForbidden", "Message " + string_id + " isn't yours");
         }
     }
 
 
     @Override
-    protected Object doDelete(HttpServletRequest req) throws ServletException, IOException, ApiException {
+    protected Void doDelete(HttpServletRequest req) throws ServletException, IOException, ApiException {
         User auth_user = getAuthenticatedUser(req);
 
         String string_id = req.getRequestURI().split("/")[2];
-        long id = Integer.parseInt(string_id);
-        MessagesRepository.deleteMessage(id);
-        return "Message with id " + id + " has been deleted";
+        long id = Long.parseLong(string_id);
+
+        Message message = getMessage(id);
+
+        if (auth_user.equals(message.user.getValue())) {
+            MessagesRepository.deleteMessage(id);
+        } else {
+            throw new ApiException(403, "Action forbidden", "Message " + string_id + " isn't yours");
+        }
+
+        return null;
+    }
+
+
+    // Return a message from an id and throw Exception if doesn't exist
+    private Message getMessage(long id) throws ApiException {
+        Message message = MessagesRepository.getMessage(id);
+        if (message == null) {
+            throw new ApiException(404, "Resource not found", "Message doesn't exist");
+        } else return message;
     }
 
 }

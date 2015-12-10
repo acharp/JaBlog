@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+<urlrewrite>
+
+    <rule>
+        <from>/users/(\w+)/followed</from>
+        <to>/users?followedBy=$1</to>
+    </rule>
+
+    <rule>
+        <from>/users/(\w+)/followers</from>
+        <to>/users?followerOf=$1</to>
+    </rule>
+
+</urlrewrite>

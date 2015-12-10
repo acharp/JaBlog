@@ -92,25 +92,21 @@ public class JsonServlet extends HttpServlet {
             }
 
         } else {
-            return null;
+            throw new ApiException(400, "invalidRequest", "Missing header authorization field");
         }
     }
 
     // On récupère les paramètres sans préciser le type. En utilisant JsonParser et en récupérant un simple objet Json.
-    protected static JsonObject getJsonParameters(HttpServletRequest req) throws IOException {
+    protected static JsonObject getJsonRequestBody(HttpServletRequest req) throws IOException {
         return new JsonParser()
-                .parse(
-                        new InputStreamReader(req.getInputStream())
-                ).getAsJsonObject();
+                .parse(req.getReader())
+                .getAsJsonObject();
     }
 
     // Pareil que ci-dessus mais variante en précisant le type en paramètre.
     // On utilise Gson avec son fromJson et on récupère un objet du type indiqué en paramètre.
     // Plus simple pour instancier directement un objet de notre modèle depuis un json.
-    protected static <T> T getJsonParameters(HttpServletRequest req, Class<T> type) throws IOException{
-        return GsonFactory.getGson().fromJson(
-                new InputStreamReader(req.getInputStream()),
-                type
-        );
+    protected static <T> T getJsonRequestBody(HttpServletRequest req, Class<T> type) throws IOException {
+        return GsonFactory.getGson().fromJson(req.getReader(), type);
     }
 }
