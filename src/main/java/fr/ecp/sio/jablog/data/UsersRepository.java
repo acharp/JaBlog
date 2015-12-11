@@ -76,22 +76,22 @@ public class UsersRepository {
 
     public static UsersList getUserFollowed(long id, int limit){
         return getUsers();
-        //:TODO
+        //TODO
     }
 
     public static UsersList getUserFollowed(String cursor, int limit){
         return getUsers();
-        //:TODO
+        //TODO
     }
 
-    public static UsersList getUserFollowers(long id){
+    public static UsersList getUserFollowers(long id, int limit){
         return getUsers();
-        //:TODO
+        //TODO
     }
 
-    public static UsersList getUserFollowers(String cursor, long id){
+    public static UsersList getUserFollowers(String cursor, int limit){
         return getUsers();
-        //:TODO
+        //TODO
     }
 
     public static class UsersList {
@@ -105,7 +105,7 @@ public class UsersRepository {
     }
 
     public static void setUserFollowed(long followerId, long followedId, boolean followed) {
-        // To implement later
+        //TODO
     }
 
 }

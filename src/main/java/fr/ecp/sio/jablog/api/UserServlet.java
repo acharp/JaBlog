@@ -44,12 +44,29 @@ public class UserServlet extends JsonServlet{
     }
 
 
+    // This request handle 2 cases :
+    // id in the url is different than authenticated user and the json contains a "followed" boolean field => manage following relationship
+    // id in the url is the same as the one of authenticated user => manage user account modifications
     @Override
     protected User doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
-        User auth_user = getAuthenticatedUser(req);
 
+        User auth_user = getAuthenticatedUser(req);
         JsonObject updt_info = getJsonRequestBody(req);
 
+        // First case : managing relationship. We return the authenticated user.
+        if (updt_info.has("followed")) {
+            boolean followed = updt_info.get("followed").getAsBoolean();
+            long set_following_id = Long.parseLong(req.getRequestURI().split("/")[2]);
+
+            if (auth_user.id == set_following_id) {
+                throw new ApiException(400, "badRequest", "Sorry you can't follow yourself !");
+            }
+
+            UsersRepository.setUserFollowed(auth_user.id, set_following_id, followed);
+            return auth_user;
+        }
+
+        // Second case : modifying user account. We return the updated user.
         String string_id = req.getRequestURI().split("/")[2];
         long id = Long.parseLong(string_id);
         if (auth_user.id != id){
@@ -94,7 +111,6 @@ public class UserServlet extends JsonServlet{
            new_user.avatar = updt_info.get("avatar").getAsString();
         } else { new_user.avatar = old_user.avatar; }
 
-        // TODO: Handle special parameters like "followed=true" to create or destroy following relationships
 
         UsersRepository.deleteUser(old_user.id);
         UsersRepository.saveUser(new_user);
