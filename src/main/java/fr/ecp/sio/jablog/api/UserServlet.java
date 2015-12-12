@@ -152,4 +152,17 @@ public class UserServlet extends JsonServlet{
             throw new ApiException(404, "Resource not found", "User doesn't exist");
         } else return user;
     }
+
+
+    private String adaptURI(String uri, HttpServletRequest req) throws ApiException {
+
+        if (uri.contains("me")) {
+            User auth_user = getAuthenticatedUser(req);
+            Long userid = auth_user.id;
+            String[] uritab = uri.split("/");
+            String new_uri = uritab[0] + userid + uritab[2];
+            return new_uri;
+        }
+        return uri;
+    }
 }

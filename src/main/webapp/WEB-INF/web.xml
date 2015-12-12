@@ -68,23 +68,14 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>Followed</servlet-name>
-        <servlet-class>fr.ecp.sio.jablog.api.FollowedServlet</servlet-class>
+        <servlet-name>Relationship</servlet-name>
+        <servlet-class>fr.ecp.sio.jablog.api.RelationshipServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Followed</servlet-name>
+        <servlet-name>Relationship</servlet-name>
         <url-pattern>usersFollowedBy/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>Followers</servlet-name>
-        <servlet-class>fr.ecp.sio.jablog.api.FollowersServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Followers</servlet-name>
         <url-pattern>usersFollowersOf/*</url-pattern>
     </servlet-mapping>
-
 
 
 </web-app>
