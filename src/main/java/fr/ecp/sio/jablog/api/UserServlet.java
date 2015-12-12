@@ -24,13 +24,16 @@ public class UserServlet extends JsonServlet{
     @Override
     protected User doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
 
+        String uri = req.getRequestURI();
+        uri = UserServlet.adaptURI(uri,req);
+
         // Retrieve id of the needed user in the url
-        String string_id = req.getRequestURI().split("/")[2];
+        String string_id = uri.split("/")[2];
         long id = Long.parseLong(string_id);
 
         User user = getUser(id);
 
-        // If authenticated user is the same as the user returned we return all infos
+        // If authenticated user is the same as the user targeted we return all infos
         if (getAuthenticatedUser(req).id == id) {
             return user;
         } else {
@@ -50,13 +53,16 @@ public class UserServlet extends JsonServlet{
     @Override
     protected User doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
 
+        String uri = req.getRequestURI();
+        uri = UserServlet.adaptURI(uri,req);
+
         User auth_user = getAuthenticatedUser(req);
         JsonObject updt_info = getJsonRequestBody(req);
 
         // First case : managing relationship. We return the authenticated user.
         if (updt_info.has("followed")) {
             boolean followed = updt_info.get("followed").getAsBoolean();
-            long set_following_id = Long.parseLong(req.getRequestURI().split("/")[2]);
+            long set_following_id = Long.parseLong(uri.split("/")[2]);
 
             if (auth_user.id == set_following_id) {
                 throw new ApiException(400, "badRequest", "Sorry you can't follow yourself !");
@@ -67,7 +73,7 @@ public class UserServlet extends JsonServlet{
         }
 
         // Second case : modifying user account. We return the updated user.
-        String string_id = req.getRequestURI().split("/")[2];
+        String string_id = uri.split("/")[2];
         long id = Long.parseLong(string_id);
         if (auth_user.id != id){
             throw new ApiException(403, "actionForbidden", "This isn't your user account");
@@ -154,14 +160,11 @@ public class UserServlet extends JsonServlet{
     }
 
 
-    private String adaptURI(String uri, HttpServletRequest req) throws ApiException {
-
+    // Adapt the url to handle the "/users/me" syntax
+    protected static String adaptURI(String uri, HttpServletRequest req) throws ApiException {
         if (uri.contains("me")) {
             User auth_user = getAuthenticatedUser(req);
-            Long userid = auth_user.id;
-            String[] uritab = uri.split("/");
-            String new_uri = uritab[0] + userid + uritab[2];
-            return new_uri;
+            return "/" + uri.split("/")[1] + "/" + auth_user.id;
         }
         return uri;
     }

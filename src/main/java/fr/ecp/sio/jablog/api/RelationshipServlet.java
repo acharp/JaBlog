@@ -23,7 +23,7 @@ public class RelationshipServlet extends JsonServlet {
     protected UsersList doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
 
         String uri = req.getRequestURI();
-        String test = adaptURI(uri,req);
+        uri = UserServlet.adaptURI(uri,req);
 
         long id = Long.parseLong(uri.split("/")[2]);
         if (UsersRepository.getUser(id) == null) {
@@ -77,6 +77,7 @@ public class RelationshipServlet extends JsonServlet {
         }
     }
 
+    // Check if we are at the end of the list of users to return and formate the result
     private UsersList handleCursor(UsersList result, int limit) {
         if (result.users.size() < limit) {
             result.cursor = null;
@@ -88,15 +89,4 @@ public class RelationshipServlet extends JsonServlet {
         }
     }
 
-    private String adaptURI(String uri, HttpServletRequest req) throws ApiException {
-
-        if (uri.contains("me")) {
-            User auth_user = getAuthenticatedUser(req);
-            Long userid = auth_user.id;
-            String[] uritab = uri.split("/");
-            String new_uri = uritab[0] + userid + uritab[2];
-            return new_uri;
-        }
-        return uri;
-    }
 }
