@@ -77,5 +77,14 @@
         <url-pattern>usersFollowersOf/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>Avatar</servlet-name>
+        <servlet-class>fr.ecp.sio.jablog.api.AvatarServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Avatar</servlet-name>
+        <url-pattern>users/me/avatar</url-pattern>
+    </servlet-mapping>
+
 
 </web-app>
