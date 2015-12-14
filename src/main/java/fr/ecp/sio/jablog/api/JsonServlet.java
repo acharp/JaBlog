@@ -28,15 +28,13 @@ public class JsonServlet extends HttpServlet {
     @Override
     protected final void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            Object response = doGet(req); // Récupération de la requête via la fct doGet ci dessous implémentée par les sous-classes servlet
+            Object response = doGet(req);
             sendResponse(response,resp);
         } catch (ApiException e) {
             resp.setStatus(e.getError().status);
             sendResponse(e, resp);
         }
     }
-    // On a placé le mot-clé final sur cette méthode pour interdire aux classes filles d'overrider cette méthode
-    // Qu'elles ne se trompent pas avec la doGet ci dessous qui est la méthode à implémenter par les classes filles.
 
     protected Object doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
         return null;

@@ -1,6 +1,9 @@
 package fr.ecp.sio.jablog.api;
 
 import com.google.appengine.tools.cloudstorage.*;
+import com.google.gson.JsonObject;
+import fr.ecp.sio.jablog.data.UsersRepository;
+import fr.ecp.sio.jablog.model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +22,15 @@ public class AvatarServlet extends JsonServlet{
     private static final String BUCKET_NAME = "jablog_images";
 
     @Override
-    protected String doPost(HttpServletRequest req) throws ServletException, IOException {
+    protected String doPost(HttpServletRequest req) throws ServletException, IOException, ApiException {
+
+        User user_auth = getAuthenticatedUser(req);
+
+        JsonObject json = getJsonRequestBody(req);
+        // The json must contain a picture field which value is the path of the file to upload
+        if (json == null || !(json.has("picture"))){
+            throw new ApiException(400, "invalidRequest", "Invalid JSON body");
+        }
 
         String unique = UUID.randomUUID().toString();
 
@@ -30,7 +41,7 @@ public class AvatarServlet extends JsonServlet{
                 .build();
         GcsOutputChannel outputChannel = gcsService.createOrReplace(fileName, options);
 
-        File file = new File("./bojack.jpg");
+        File file = new File(json.get("picture").getAsString());
         byte[] buffer = new byte[BUFFER_SIZE];
 
         try (OutputStream ops = Channels.newOutputStream(outputChannel); FileInputStream fis = new FileInputStream(file)) {
@@ -42,6 +53,9 @@ public class AvatarServlet extends JsonServlet{
         }
 
         String storageURL = "http://storage.googleapis.com/" + BUCKET_NAME + "/" + unique+".jpg";
+
+        user_auth.avatar = storageURL;
+        UsersRepository.saveUser(user_auth);
 
         return storageURL;
 

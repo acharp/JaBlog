@@ -57,7 +57,7 @@ public class UsersServlet extends JsonServlet {
         // Explicitly give a fresh id to the user (we need it for next step)
         user.id = UsersRepository.allocateNewId();
 
-        // TODO: find a solution to receive an store profile pictures
+        // Default avatar, used while the user hasn't set his own with AvatarServlet
         user.avatar ="http://www.gravatar.com/avatar" + MD5Utils.md5Hex(user.email) + "?d=wavatar";
 
         // Hash password

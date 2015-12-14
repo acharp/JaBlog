@@ -36,12 +36,8 @@ public class TokenServlet extends JsonServlet{
         // Get user from login
         User user = UsersRepository.getUserByLogin(login);
         if (user != null) {
-            // SHA 256 password (salt=id)
-            // Le sel du hashage permet de garantir que même si deux users choisissent le même password, le hash de chacun de ces password sera
-            // différent car chaque user a un id différent (et c'est parceque l'id est unique qu'on le choisit comme sel de hashage).
             String hash = DigestUtils.sha256Hex(password + user.id);
             if (hash.equals(user.password)) {
-                // Pour générer le token on choisit d'encoder l'id de l'user. On fait cette encodage avec la librairie jjwt. cf TokenUtils
                 return TokenUtils.generateToken(user.id);
             } else {
                 throw new ApiException(403, "invalidPassword", "Incorrect password");
