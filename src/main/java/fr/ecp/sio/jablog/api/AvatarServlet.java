@@ -29,29 +29,21 @@ public class AvatarServlet extends JsonServlet{
                 .acl("public-read")
                 .build();
         GcsOutputChannel outputChannel = gcsService.createOrReplace(fileName, options);
-        OutputStream ops = Channels.newOutputStream(outputChannel);
 
-        Runtime.getRuntime().exec("chmod 666 file");
-        //FilePermission permission = new FilePermission("<<ALL FILES>>", "read,write");
-        File file = new File("/home/charpi/IdeaProjects/JaBlog/src/main/webapp/bojack.jpg");
-        //file.setWritable(true);
-        //file.setReadable(true);
-        FileInputStream fis = new FileInputStream(file);
+        File file = new File("./bojack.jpg");
         byte[] buffer = new byte[BUFFER_SIZE];
 
-        try {
+        try (OutputStream ops = Channels.newOutputStream(outputChannel); FileInputStream fis = new FileInputStream(file)) {
             int bytesRead = fis.read(buffer);
-            while (bytesRead != 1) {
+            while (bytesRead != -1) {
                 ops.write(buffer, 0, bytesRead);
                 bytesRead = fis.read(buffer);
             }
         }
-        finally {
-            fis.close();
-            ops.close();
-        }
 
-        return null;
+        String storageURL = "http://storage.googleapis.com/" + BUCKET_NAME + "/" + unique+".jpg";
+
+        return storageURL;
 
     }
 }

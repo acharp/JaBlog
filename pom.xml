@@ -9,7 +9,7 @@
     <artifactId>jablog</artifactId>
 
     <properties>
-        <app.id>your-app-id</app.id>
+        <app.id>jablog-1158</app.id>
         <app.version>1</app.version>
         <appengine.version>1.9.28</appengine.version>
         <gcloud.plugin.version>2.0.9.84.v20151028</gcloud.plugin.version>
