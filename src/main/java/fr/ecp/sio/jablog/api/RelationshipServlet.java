@@ -77,7 +77,7 @@ public class RelationshipServlet extends JsonServlet {
         }
     }
 
-    // Check if we are at the end of the list of users to return and formate the result
+    // Check if we are at the end of the list to return and formate the result
     private UsersList handleCursor(UsersList result, int limit) {
         if (result.users.size() < limit) {
             result.cursor = null;

@@ -144,7 +144,6 @@ public class UserServlet extends JsonServlet{
         }
 
         // TODO: Delete the relationships of the user
-
         UsersRepository.deleteUser(id);
 
         return null;

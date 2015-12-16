@@ -77,7 +77,7 @@ public class MessageServlet extends JsonServlet {
         if (auth_user.equals(message.user.getValue())) {
             MessagesRepository.deleteMessage(id);
         } else {
-            throw new ApiException(403, "Action forbidden", "Message " + string_id + " isn't yours");
+            throw new ApiException(403, "actionForbidden", "Message " + string_id + " isn't yours");
         }
 
         return null;
