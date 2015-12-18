@@ -2,19 +2,18 @@ package fr.ecp.sio.jablog.api;
 
 import fr.ecp.sio.jablog.data.UsersRepository;
 import fr.ecp.sio.jablog.data.UsersRepository.UsersList;
-import fr.ecp.sio.jablog.model.User;
+import fr.ecp.sio.jablog.utils.QueryParamsUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 
 /**
  * Created by charpi on 10/12/15.
  */
-public class RelationshipServlet extends JsonServlet {
+public class RelationshipServlet extends UsersServlet {
 
     private final static String FOLLOWERSOF = "FollowersOf";
     private final static String FOLLOWEDBY = "FollowedBy";
@@ -31,21 +30,12 @@ public class RelationshipServlet extends JsonServlet {
         }
 
         // Params default values
-        int limit = 20;
+        Integer limit = 20;
         String cursor = null;
 
         // Retrieve query string params
-        String queryString = req.getQueryString();
-        if (queryString != null){
-
-            String[] params = queryString.split("&");
-            Map<String, String> paramsDic = new HashMap<>();
-            for (String param : params) {
-                String name = param.split("=")[0];
-                String value = param.split("=")[1];
-                paramsDic.put(name, value);
-            }
-
+        Map<String, String> paramsDic = QueryParamsUtils.getQueryParams(req);
+        if (paramsDic != null) {
             if (paramsDic.containsKey("limit")) {
                 limit = Integer.parseInt(paramsDic.get("limit"));
             }
@@ -54,39 +44,16 @@ public class RelationshipServlet extends JsonServlet {
             }
         }
 
-        // Get following relationship infos. Getting methods depend on the existence of cursor param.
+        // Get followers or followed list.
         UsersList result = null;
-        if (cursor != null) {
+        if (uri.contains(FOLLOWEDBY)) {
+            result = UsersRepository.getUserFollowed(id, cursor, limit);
+        }
+        else if (uri.contains(FOLLOWERSOF)) {
+            result = UsersRepository.getUserFollowers(id, cursor, limit);
+        }
 
-            if (uri.contains(FOLLOWEDBY)) {
-                result = UsersRepository.getUserFollowed(cursor, limit);
-            }
-            else if (uri.contains(FOLLOWERSOF)) {
-                result = UsersRepository.getUserFollowers(cursor, limit);
-            }
-            return handleCursor(result, limit);
-        }
-        else {
-            if (uri.contains(FOLLOWEDBY)) {
-                result = UsersRepository.getUserFollowed(id, limit);
-            }
-            else if (uri.contains(FOLLOWERSOF)) {
-                result = UsersRepository.getUserFollowers(id, limit);
-            }
-            return handleCursor(result, limit);
-        }
-    }
-
-    // Check if we are at the end of the list to return and formate the result
-    private UsersList handleCursor(UsersList result, int limit) {
-        if (result.users.size() < limit) {
-            result.cursor = null;
-            return result;
-        } else {
-            // TODO: implement a real cursor handling
-            result.cursor = "nextCursor";
-            return result;
-        }
+        return handleCursor(result, limit);
     }
 
 }

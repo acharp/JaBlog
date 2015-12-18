@@ -2,6 +2,7 @@ package fr.ecp.sio.jablog.api;
 
 
 import fr.ecp.sio.jablog.data.UsersRepository;
+import fr.ecp.sio.jablog.data.UsersRepository.UsersList;
 import fr.ecp.sio.jablog.model.User;
 import fr.ecp.sio.jablog.utils.MD5Utils;
 import fr.ecp.sio.jablog.utils.TokenUtils;
@@ -11,7 +12,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by charpi on 30/10/15.
@@ -19,10 +19,16 @@ import java.util.List;
 public class UsersServlet extends JsonServlet {
 
     @Override
-    protected List<User> doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
+    protected UsersList doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
         // TODO: define parameters to search/filter users by login, with limit, order...
-        // TODO: define parameters to get the followings and the followers of a user given its id
-        return UsersRepository.getUsers().users;
+
+        // Params default values
+        Integer limit = 40;
+        String cursor = null;
+        // TODO: handle query parameters limit and cursor
+
+        UsersList result = UsersRepository.getUsers(limit, cursor);
+        return handleCursor(result, limit);
     }
 
     @Override
@@ -68,5 +74,17 @@ public class UsersServlet extends JsonServlet {
 
         // Return a token
         return TokenUtils.generateToken(user.id);
+    }
+
+    // Check if we are at the end of the list to return and handle the cursor
+    protected UsersList handleCursor(UsersList userslist, Integer limit) {
+        if (userslist.users.size() < limit) {
+            userslist.cursor = null;
+            return userslist;
+        } else {
+            // TODO: implement a real cursor handling
+            userslist.cursor = "nextCursor";
+            return userslist;
+        }
     }
 }

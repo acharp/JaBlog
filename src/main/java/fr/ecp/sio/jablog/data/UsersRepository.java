@@ -43,7 +43,7 @@ public class UsersRepository {
                 .now();
     }
 
-    public static UsersList getUsers() {
+    public static UsersList getUsers(Integer limit, String cursor) {
         return new UsersList(
                 ObjectifyService.ofy()
                         .load()
@@ -73,24 +73,13 @@ public class UsersRepository {
                 .now();
     }
 
-
-    public static UsersList getUserFollowed(long id, int limit){
-        return getUsers();
+    public static UsersList getUserFollowed(long id, String cursor, int limit){
+        return getUsers(limit, cursor);
         //TODO
     }
 
-    public static UsersList getUserFollowed(String cursor, int limit){
-        return getUsers();
-        //TODO
-    }
-
-    public static UsersList getUserFollowers(long id, int limit){
-        return getUsers();
-        //TODO
-    }
-
-    public static UsersList getUserFollowers(String cursor, int limit){
-        return getUsers();
+    public static UsersList getUserFollowers(long id, String cursor, int limit){
+        return getUsers(limit, cursor);
         //TODO
     }
 

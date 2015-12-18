@@ -1,5 +1,7 @@
 package fr.ecp.sio.jablog.api;
 
+import com.google.appengine.api.images.ServingUrlOptions;
+import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.tools.cloudstorage.*;
 import com.google.gson.JsonObject;
 import fr.ecp.sio.jablog.data.UsersRepository;
@@ -31,6 +33,7 @@ public class AvatarServlet extends JsonServlet{
             throw new ApiException(400, "invalidRequest", "Invalid JSON body");
         }
 
+        // Outputstream to GCS bucket
         GcsFilename fileName = new GcsFilename(BUCKET_NAME, user_auth.login + ".jpg");
         GcsFileOptions options = new GcsFileOptions.Builder()
                 .mimeType("image/jpg")
@@ -38,8 +41,8 @@ public class AvatarServlet extends JsonServlet{
                 .build();
         GcsOutputChannel outputChannel = gcsService.createOrReplace(fileName, options);
 
+        // Input stream from the file to upload
         File file = new File(json.get("picture").getAsString());
-        // URL url = new URL(json.get("picture").getAsString());
         byte[] buffer = new byte[BUFFER_SIZE];
 
         try (OutputStream ops = Channels.newOutputStream(outputChannel); FileInputStream fis = new FileInputStream(file)) {
@@ -50,7 +53,8 @@ public class AvatarServlet extends JsonServlet{
             }
         }
 
-        String storageURL = "http://storage.googleapis.com/" + BUCKET_NAME + "/" + user_auth.login + ".jpg";
+        ServingUrlOptions urlOptions = ServingUrlOptions.Builder.withGoogleStorageFileName("/gs/" + BUCKET_NAME + "/" + user_auth.login + ".jpg");
+        String storageURL = ImagesServiceFactory.getImagesService().getServingUrl(urlOptions);
 
         user_auth.avatar = storageURL;
         UsersRepository.saveUser(user_auth);

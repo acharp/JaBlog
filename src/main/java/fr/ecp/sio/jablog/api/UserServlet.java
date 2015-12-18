@@ -1,7 +1,6 @@
 package fr.ecp.sio.jablog.api;
 
 import com.google.gson.JsonObject;
-import com.googlecode.objectify.Ref;
 import fr.ecp.sio.jablog.data.MessagesRepository;
 import fr.ecp.sio.jablog.data.UsersRepository;
 import fr.ecp.sio.jablog.model.Message;
@@ -12,9 +11,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by charpi on 30/10/15.
@@ -47,7 +44,7 @@ public class UserServlet extends JsonServlet{
     }
 
 
-    // This request handle 2 cases :
+    // This request handles 2 cases :
     // id in the url is different than authenticated user and the json contains a "followed" boolean field => manage following relationship
     // id in the url is the same as the one of authenticated user => manage user account modifications
     @Override
@@ -113,10 +110,8 @@ public class UserServlet extends JsonServlet{
             new_user.password = DigestUtils.sha256Hex(password + new_user.id);
         } else { new_user.password = old_user.password; }
 
-        if (updt_info.has("avatar")) {
-           new_user.avatar = updt_info.get("avatar").getAsString();
-        } else { new_user.avatar = old_user.avatar; }
-
+        // We keep the same avatar. To change his avatar, user should use AvatarServlet.
+        new_user.avatar = old_user.avatar;
 
         UsersRepository.deleteUser(old_user.id);
         UsersRepository.saveUser(new_user);

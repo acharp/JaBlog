@@ -19,7 +19,7 @@ public class MessagesServlet extends JsonServlet {
     protected List<Message> doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
         // TODO: filter the messages that the user can see (security!)
         // TODO: filter the list based on some parameters (order, limit, scope...)
-        // TODO: e.g. add a parameter to get the messages of a user given its id (i.e. /messages?author=256439)
+        // TODO: e.g. add a parameter to get the messages of a user given its id (i.e. /messages?userr=256439)
         return MessagesRepository.getMessages();
     }
 
