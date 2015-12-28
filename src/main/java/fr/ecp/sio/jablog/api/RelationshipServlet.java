@@ -2,11 +2,13 @@ package fr.ecp.sio.jablog.api;
 
 import fr.ecp.sio.jablog.data.UsersRepository;
 import fr.ecp.sio.jablog.data.UsersRepository.UsersList;
+import fr.ecp.sio.jablog.model.User;
 import fr.ecp.sio.jablog.utils.QueryParamsUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -19,7 +21,7 @@ public class RelationshipServlet extends UsersServlet {
     private final static String FOLLOWEDBY = "FollowedBy";
 
     @Override
-    protected UsersList doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
+    protected List<User> doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
 
         String uri = req.getRequestURI();
         uri = UserServlet.adaptURI(uri,req);
@@ -53,7 +55,7 @@ public class RelationshipServlet extends UsersServlet {
             result = UsersRepository.getUserFollowers(id, cursor, limit);
         }
 
-        return handleCursor(result, limit);
+        return handleCursor(result, limit).users;
     }
 
 }

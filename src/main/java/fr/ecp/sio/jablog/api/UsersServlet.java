@@ -12,6 +12,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by charpi on 30/10/15.
@@ -19,7 +20,7 @@ import java.io.IOException;
 public class UsersServlet extends JsonServlet {
 
     @Override
-    protected UsersList doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
+    protected List<User> doGet(HttpServletRequest req) throws ServletException, IOException, ApiException {
         // TODO: define parameters to search/filter users by login, with limit, order...
 
         // Params default values
@@ -28,7 +29,7 @@ public class UsersServlet extends JsonServlet {
         // TODO: handle query parameters limit and cursor
 
         UsersList result = UsersRepository.getUsers(limit, cursor);
-        return handleCursor(result, limit);
+        return handleCursor(result, limit).users;
     }
 
     @Override
@@ -64,7 +65,8 @@ public class UsersServlet extends JsonServlet {
         user.id = UsersRepository.allocateNewId();
 
         // Default avatar, used while the user hasn't set his own with AvatarServlet
-        user.avatar ="http://www.gravatar.com/avatar" + MD5Utils.md5Hex(user.email) + "?d=wavatar";
+        //user.avatar ="http://www.gravatar.com/avatar" + MD5Utils.md5Hex(user.email) + "?d=wavatar";
+        user.avatar = "https://robohash.org/" + MD5Utils.md5Hex(user.email) + ".png";
 
         // Hash password
         user.password = DigestUtils.sha256Hex(user.password + user.id);

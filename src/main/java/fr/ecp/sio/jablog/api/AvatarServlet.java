@@ -1,15 +1,18 @@
 package fr.ecp.sio.jablog.api;
 
+import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.tools.cloudstorage.*;
 import com.google.gson.JsonObject;
+import com.googlecode.objectify.ObjectifyService;
 import fr.ecp.sio.jablog.data.UsersRepository;
 import fr.ecp.sio.jablog.model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 
 /**
@@ -27,11 +30,13 @@ public class AvatarServlet extends JsonServlet{
 
         User user_auth = getAuthenticatedUser(req);
 
+/*
         JsonObject json = getJsonRequestBody(req);
         // The json must contain a picture field which value is the path of the file to upload
         if (json == null || !(json.has("picture"))){
             throw new ApiException(400, "invalidRequest", "Invalid JSON body");
         }
+*/
 
         // Outputstream to GCS bucket
         GcsFilename fileName = new GcsFilename(BUCKET_NAME, user_auth.login + ".jpg");
@@ -41,11 +46,14 @@ public class AvatarServlet extends JsonServlet{
                 .build();
         GcsOutputChannel outputChannel = gcsService.createOrReplace(fileName, options);
 
+/*
         // Input stream from the file to upload
         File file = new File(json.get("picture").getAsString());
+*/
+
         byte[] buffer = new byte[BUFFER_SIZE];
 
-        try (OutputStream ops = Channels.newOutputStream(outputChannel); FileInputStream fis = new FileInputStream(file)) {
+        try (OutputStream ops = Channels.newOutputStream(outputChannel); InputStream fis = req.getInputStream()) {
             int bytesRead = fis.read(buffer);
             while (bytesRead != -1) {
                 ops.write(buffer, 0, bytesRead);
@@ -61,5 +69,4 @@ public class AvatarServlet extends JsonServlet{
 
         return storageURL;
     }
-
 }
